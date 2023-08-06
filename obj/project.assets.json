@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Ola\\Desktop\\AirportTicketBooking\\Airport Ticket Booking\\Airport Ticket Booking.csproj",
+      "projectUniqueName": "C:\\Users\\Ola\\Desktop\\Airport Ticket Booking\\Airport Ticket Booking.csproj",
       "projectName": "Airport Ticket Booking",
-      "projectPath": "C:\\Users\\Ola\\Desktop\\AirportTicketBooking\\Airport Ticket Booking\\Airport Ticket Booking.csproj",
+      "projectPath": "C:\\Users\\Ola\\Desktop\\Airport Ticket Booking\\Airport Ticket Booking.csproj",
       "packagesPath": "C:\\Users\\Ola\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Ola\\Desktop\\AirportTicketBooking\\Airport Ticket Booking\\obj\\",
+      "outputPath": "C:\\Users\\Ola\\Desktop\\Airport Ticket Booking\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Ola\\AppData\\Roaming\\NuGet\\NuGet.Config",

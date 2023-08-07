@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics.Metrics;
 
 namespace AirportTicketBooking
 {
     internal static class Program
     {
+             public static int numOfFlights;
              public static int numOfBookings;
              static void Main(string[] args)
              {
-             StaticMethods.ReadFlightsFromFile();
-             StaticMethods.ReadPassengersFromFile();
-             StaticMethods.ReadManagersFromFile();
-             StaticMethods.ReadBookingsFromFile();
-             StaticMethods.LoadPassengersBookings();
-             numOfBookings = StaticMethods.Bookings.Count + 1;
-                int choise;
+             StaticMembers.ReadFlightsFromFile();
+             StaticMembers.ReadPassengersFromFile();
+             StaticMembers.ReadManagersFromFile();
+             StaticMembers.ReadBookingsFromFile();
+             StaticMembers.LoadPassengersBookings();
+             numOfFlights = StaticMembers.Flights.Count;
+             numOfBookings = StaticMembers.Bookings.Count + 1;
+            int choise;
                 while (true)
                 {
                 Console.WriteLine("- - - - - - - - - - - - - ");
@@ -36,7 +39,7 @@ namespace AirportTicketBooking
                         string userName = Console.ReadLine();
                         Console.WriteLine("Enter your Password :  ");
                         string userPassword = Console.ReadLine();
-                        Passenger passenger = StaticMethods.Passengers.FirstOrDefault(p => p.Name == userName && p.Password == userPassword);
+                        Passenger passenger = StaticMembers.Passengers.FirstOrDefault(p => p.Name == userName && p.Password == userPassword);
                         if (passenger != null)
                         {
                             Console.WriteLine("Welcome, " + passenger.Name + "!");
@@ -64,7 +67,7 @@ namespace AirportTicketBooking
                                 switch (option)
                                 {
                                     case 1 :
-                                        StaticMethods.PrintFlights(StaticMethods.Flights);
+                                        passenger.ViewAllFlights();
                                         Console.WriteLine("Enter the number of the flight : ");
                                         int numberOfFlight;
                                         if (!int.TryParse(Console.ReadLine() , out numberOfFlight))
@@ -72,7 +75,7 @@ namespace AirportTicketBooking
                                             Console.WriteLine("Invalid input.");
                                             continue;
                                         }
-                                        Flight flight = StaticMethods.Flights[numberOfFlight - 1];
+                                        Flight flight = StaticMembers.Flights[numberOfFlight - 1];
                                         Console.WriteLine("What the class you need : ");
                                         Console.WriteLine("1 - Economy class : ");
                                         Console.WriteLine("2 - Business class : ");
@@ -108,10 +111,10 @@ namespace AirportTicketBooking
                                         case 2:
                                         Console.WriteLine("Inter the destination name :  ");
                                         string destinationName = Console.ReadLine();
-                                        if (StaticMethods.Flights.Any(f => f.DestinationCountry == destinationName))
+                                        if (StaticMembers.Flights.Any(f => f.DestinationCountry == destinationName))
                                         {
-                                            List<Flight> destinationFlights = StaticMethods.Flights.Where(f => f.DestinationCountry == destinationName).ToList();
-                                            StaticMethods.PrintFlights(destinationFlights);
+                                            List<Flight> destinationFlights = StaticMembers.Flights.Where(f => f.DestinationCountry == destinationName).ToList();
+                                            StaticMembers.PrintFlights(destinationFlights);
                                         }
                                         else Console.WriteLine("Theres no flights to this destination :( :  ");
                                         break;
@@ -192,7 +195,7 @@ namespace AirportTicketBooking
                         string managerName = Console.ReadLine();
                         Console.WriteLine("Enter your Password :  ");
                         string managerPassword = Console.ReadLine();
-                        Manager manager = StaticMethods.Managers.FirstOrDefault(m => m.Name == managerName && m.Password == managerPassword);
+                        Manager manager = StaticMembers.Managers.FirstOrDefault(m => m.Name == managerName && m.Password == managerPassword);
                         if (manager != null)
                         {
                             Console.WriteLine("Welcome, " + manager.Name + "!");
@@ -203,6 +206,7 @@ namespace AirportTicketBooking
                                 Console.WriteLine("1 - Show all flights :  ");
                                 Console.WriteLine("2 - Show all bookings :  ");
                                 Console.WriteLine("3 - Show all bookings for destination :  ");
+                                Console.WriteLine("4 - Add new flight :  ");
                                 Console.WriteLine("0 - back :   ");
                                 Console.WriteLine("- - - - - - - - - - - - - ");
 
@@ -216,19 +220,53 @@ namespace AirportTicketBooking
                                 switch(option)
                                 {
                                     case 1:
-                                        manager.ViewAllFlights(StaticMethods.Flights);
+                                        manager.ViewAllFlights();
                                         break;
                                     case 2:
-                                        StaticMethods.PrintBookingsList(StaticMethods.Bookings);
+                                        StaticMembers.PrintBookingsList(StaticMembers.Bookings);
                                         break;
                                     case 3:
                                         Console.WriteLine("Enter the name of destination country : ");
                                         string destinationName=Console.ReadLine();
                                         List<Booking> bookingsForDestination = new List<Booking>();
-                                        bookingsForDestination= StaticMethods.Bookings.Where(b=>b.BookedFlight.DestinationCountry== destinationName).ToList();
-                                        StaticMethods.PrintBookingsList(bookingsForDestination);
+                                        bookingsForDestination= StaticMembers.Bookings.Where(b=>b.BookedFlight.DestinationCountry== destinationName).ToList();
+                                        StaticMembers.PrintBookingsList(bookingsForDestination);
                                         break;
+                                    case 4:
+                                        Console.WriteLine("Enter the information about the new flight :  : ");
+                                        Console.WriteLine("Departure Country : ");
+                                        string departureCountry=Console.ReadLine();
+                                        Console.WriteLine("Destination Country : ");
+                                        string destinationCountry = Console.ReadLine();
+                                        Console.WriteLine("Departure Airport : ");
+                                        string departureAirport = Console.ReadLine();
+                                        Console.WriteLine("Arrival Airport : ");
+                                        string arrivalAirport = Console.ReadLine();
+                                        Console.WriteLine("Departure Date : ");
+                                        string departureDate = Console.ReadLine();
+                                        Console.WriteLine("Economy Class Price : ");
+                                        decimal EconomyClassPrice = decimal.Parse(Console.ReadLine());
+                                        Console.WriteLine("Bussiness Class Price : ");
+                                        decimal bussinessClassPrice = decimal.Parse(Console.ReadLine());
+                                        Console.WriteLine("First Class Price : ");
+                                        decimal firstClassPrice = decimal.Parse(Console.ReadLine());
 
+                                        Flight newFlight = new Flight(0, departureCountry, destinationCountry, departureAirport, arrivalAirport, departureDate, EconomyClassPrice, bussinessClassPrice, firstClassPrice);
+                                        List<string> validationErrors = newFlight.IsValid(newFlight);
+                                        if (validationErrors.Count > 0)
+                                        {
+                                            Console.WriteLine("Flight validation failed. Please correct the following errors:");
+                                            foreach (var error in validationErrors)
+                                            {
+                                                Console.WriteLine(error);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Flight is added :) ");
+                                            manager.AddNewFlight(newFlight);
+                                        }
+                                        break;
                                 }
                             }
                         }

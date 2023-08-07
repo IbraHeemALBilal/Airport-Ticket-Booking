@@ -1,6 +1,7 @@
 booking_id,passenger_name,F_num,Class
-1,Ahmad,1,economy class
 2,Ahmad,2,business class
-3,Rami,1,economy class
 4,Rami,2,business class
 5,Ahmad,3,first class
+1,Ahmad,1,first class
+3,Rami,1,business class
+7,Rami,4,economy class

@@ -21,8 +21,8 @@ namespace AirportTicketBooking
 
         public Booking(int id , Passenger passenger , Flight flight , string classType)
         {
-            if (id != default) Id = id;
-            else Id = Program.numOfBookings++;
+            if (id != default) Id = id;//when read from file
+            else Id = Program.numOfBookings++;//when make booking from the program
             BookedFlight = flight;
             Passenger = passenger;
             BookingDate = DateTime.Now;
@@ -33,11 +33,11 @@ namespace AirportTicketBooking
                 price = flight.BusinessClassPrice;
             else if (classType == "first class")
                 price = flight.FirstClassPrice;
-        }
+        }//con
         public void SaveToCsv(string csvFilePath)
         {
             string csvLine = $"{Id},{Passenger.Name},{BookedFlight.FlightNumber},{Class}";
             File.AppendAllText(csvFilePath, csvLine + Environment.NewLine);
-        }
+        }//save booking to file
     }
 }

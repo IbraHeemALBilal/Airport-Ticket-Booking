@@ -13,15 +13,15 @@ namespace AirportTicketBooking
         public static List<Passenger> Passengers = new List<Passenger>();
         public static List<Manager> Managers = new List<Manager>();
         public static List<Booking> Bookings = new List<Booking>();
-        public static void ReadFlightsFromFile()
+        public static async Task ReadFlightsFromFile()
         {
             string csvFilePath = "flights.csv";
             using (StreamReader reader = new StreamReader(csvFilePath))
             {
-                string headerLine = reader.ReadLine();
+                string headerLine = await reader.ReadLineAsync();
                 while (!reader.EndOfStream)
                 {
-                    string dataLine = reader.ReadLine();
+                    string dataLine = await reader.ReadLineAsync();
                     string[] fields = dataLine.Split(',');
                     var flight = new Flight
                     (
@@ -41,7 +41,6 @@ namespace AirportTicketBooking
         }// to read flights data from file
         public static void PrintFlights(List<Flight> flightsToPrint)
         {
-            Console.WriteLine("Flights :");
             Console.WriteLine("----------------------");
             foreach (var flight in flightsToPrint)
             {
@@ -57,15 +56,15 @@ namespace AirportTicketBooking
                 Console.WriteLine("------------------------------");
             }
         }// print list of flights
-        public static void ReadPassengersFromFile()
+        public static async Task ReadPassengersFromFile()
         {
             string csvFilePath = "Passengers.csv";
             using (StreamReader reader = new StreamReader(csvFilePath))
             {
-                string headerLine = reader.ReadLine();
+                string headerLine = await reader.ReadLineAsync();
                 while (!reader.EndOfStream)
                 {
-                    string dataLine = reader.ReadLine();
+                    string dataLine = await reader.ReadLineAsync();
                     string[] fields = dataLine.Split(',');
                     var passenger = new Passenger
                     (
@@ -76,15 +75,15 @@ namespace AirportTicketBooking
                 }
             }
         }// to read passengers data from file
-        public static void ReadManagersFromFile()
+        public static async Task ReadManagersFromFile()
         {
             string csvFilePath = "Managers.csv";
             using (StreamReader reader = new StreamReader(csvFilePath))
             {
-                string headerLine = reader.ReadLine();
+                string headerLine = await reader.ReadLineAsync();
                 while (!reader.EndOfStream)
                 {
-                    string dataLine = reader.ReadLine();
+                    string dataLine = await reader.ReadLineAsync();
                     string[] fields = dataLine.Split(',');
                     var Manager = new Manager
                     (
@@ -95,15 +94,15 @@ namespace AirportTicketBooking
                 }
             }
         }// to read Managers data from file
-        public static void ReadBookingsFromFile()
+        public static async Task ReadBookingsFromFile()
         {
             string csvFilePath = "bookings.csv";
             using (StreamReader reader = new StreamReader(csvFilePath))
             {
-                string headerLine = reader.ReadLine();
+                string headerLine = await reader.ReadLineAsync();
                 while (!reader.EndOfStream)
                 {
-                    string dataLine = reader.ReadLine();
+                    string dataLine = await reader.ReadLineAsync();
                     string[] fields = dataLine.Split(',');
                     int bookingId = int.Parse(fields[0]);
                     string passengerName = fields[1];
@@ -121,10 +120,10 @@ namespace AirportTicketBooking
                 }
             }
         }// to read bookings data from file
-        public static void PrintBookingsList(List<Booking> bookings)
+        public static async Task PrintBookingsList(List<Booking> bookings)
         {
             bookings.Clear();
-            ReadBookingsFromFile();
+            await ReadBookingsFromFile();
             Console.WriteLine("----------------------");
             foreach (var booking in bookings)
             {
@@ -138,16 +137,13 @@ namespace AirportTicketBooking
                 Console.WriteLine("----------------------");
             }
         }
-        public static void LoadPassengersBookings()
+        public static async Task LoadPassengersBookings()
         {
             foreach (var p in Passengers)
             {
-                p.PassengersBookings = Bookings.Where(b => b.Passenger.Name == p.Name).ToList();
+                p.PassengerBookings = Bookings.Where(b => b.Passenger.Name == p.Name).ToList();
             }
         }
-        /*public static int Count()
-        {
-            return Passengers.Count;
-        }*/
+
     }
 }

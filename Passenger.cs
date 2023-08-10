@@ -9,12 +9,12 @@ namespace AirportTicketBooking
 
     internal class Passenger : Person
     {
-        public List<Booking> PassengersBookings { get; set; }
+        public List<Booking> PassengerBookings { get; set; }
         public Passenger(string name, string password) : base(name, password)
         {
             Name = name;
             Password = password;
-            PassengersBookings = new List<Booking>();
+            PassengerBookings = new List<Booking>();
 
         }// con
         public void ViewAllFlights()
@@ -23,17 +23,17 @@ namespace AirportTicketBooking
         }
         public bool AddBooking(Booking booking)
         {
-            if (PassengersBookings.Any(b => b.BookedFlight.FlightNumber == booking.BookedFlight.FlightNumber))
+            if (PassengerBookings.Any(b => b.BookedFlight.FlightNumber == booking.BookedFlight.FlightNumber))
             {
                 return false;
             }
-            PassengersBookings.Add(booking);
+            PassengerBookings.Add(booking);
             booking.SaveToCsv("bookings.csv");
             return true;
         }// add
         public List<Booking> GetAllBookings()
         {
-            return PassengersBookings;
+            return PassengerBookings;
         }//get
         private void SaveBookingsToCsv(string filePath)
         {
@@ -51,7 +51,7 @@ namespace AirportTicketBooking
             csvData.AppendLine("booking_id,passenger_name,F_num,Class");
             foreach (var booking in StaticMembers.Bookings)
             {
-                if (!PassengersBookings.Contains(booking)) 
+                if (!PassengerBookings.Contains(booking)) 
                 {
                     csvData.AppendLine($"{booking.Id},{booking.Passenger.Name},{booking.BookedFlight.FlightNumber},{booking.Class}");
                 }
@@ -60,10 +60,10 @@ namespace AirportTicketBooking
         }//to delete from the file
         public bool CancelBooking(int bookingId)
         {
-            Booking bookingToRemove = PassengersBookings.FirstOrDefault(b => b.Id == bookingId);
+            Booking bookingToRemove = PassengerBookings.FirstOrDefault(b => b.Id == bookingId);
             if (bookingToRemove != null)
             {
-                PassengersBookings.RemoveAll(b => b.Id == bookingId);
+                PassengerBookings.RemoveAll(b => b.Id == bookingId);
                 StaticMembers.Bookings.RemoveAll(b => b.Id == bookingId);
                 DeleteBookingFromCsv("bookings.csv");
                 return true;
@@ -72,13 +72,13 @@ namespace AirportTicketBooking
         }//cancel
         public bool ModifyBooking(int bookingId , string newClass)
         {
-            Booking bookingToModify = PassengersBookings.FirstOrDefault(b => b.Id == bookingId);
+            Booking bookingToModify = PassengerBookings.FirstOrDefault(b => b.Id == bookingId);
             if (bookingToModify != null)
             {
                 bookingToModify.Class = newClass;
-                PassengersBookings.RemoveAll(b => b.Id == bookingId);
+                PassengerBookings.RemoveAll(b => b.Id == bookingId);
                 StaticMembers.Bookings.RemoveAll(b => b.Id == bookingId);
-                PassengersBookings.Add(bookingToModify);
+                PassengerBookings.Add(bookingToModify);
                 StaticMembers.Bookings.Add(bookingToModify);
                 SaveBookingsToCsv("bookings.csv");
                 return true;
@@ -88,7 +88,7 @@ namespace AirportTicketBooking
         public void PrintBookings()
         {
             Console.WriteLine("your Bookings :");
-            foreach (var booking in PassengersBookings)
+            foreach (var booking in PassengerBookings)
             {
                 Console.WriteLine("Booking ID: " + booking.Id);
                 Console.WriteLine("Flight Number: " + booking.BookedFlight.FlightNumber);

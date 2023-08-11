@@ -11,33 +11,36 @@ namespace AirportTicketBooking
 {
     internal class Booking
     {
-        private static int lastAssignedId = Program.numOfBookings;
-        public int Id { get; init ; }
-        public Passenger Passenger { get ; init ; }
-        public Flight BookedFlight { get ; init ; }   
-        public DateTime BookingDate { get; init ; }
-        public string Class { get; set; }
-        public decimal price { get; set; } 
-
-        public Booking(int id , Passenger passenger , Flight flight , string classType)
+        private static int lastAssignedId = Program.NumberOfBookings;
+        public int Id { get; init; }
+        public Passenger Passenger { get; init; }
+        public Flight BookedFlight { get; init; }
+        public DateTime BookingDate { get; init; }
+        public FlightClassType Class { get; set; }
+        public decimal price { get; set; }
+        public Booking(int id, Passenger passenger, Flight flight, FlightClassType classType)
         {
             if (id != default) Id = id;//when read from file
-            else Id = Program.numOfBookings++;//when make booking from the program
+            else Id = ++Program.NumberOfBookings;//when make booking from the program
             BookedFlight = flight;
             Passenger = passenger;
             BookingDate = DateTime.Now;
             Class = classType;
-            if (classType == "economy class")
-                price = flight.EconomyClassPrice;
-            else if (classType == "business class")
-                price = flight.BusinessClassPrice;
-            else if (classType == "first class")
-                price = flight.FirstClassPrice;
-        }//con
-        public void SaveToCsv(string csvFilePath)
-        {
-            string csvLine = $"{Id},{Passenger.Name},{BookedFlight.FlightNumber},{Class}";
-            File.AppendAllText(csvFilePath, csvLine + Environment.NewLine);
-        }//save booking to file
+            switch (classType)
+            {
+                case FlightClassType.Economy:
+                    price = flight.EconomyClassPrice;
+                    break;
+                case FlightClassType.Business:
+                    price = flight.BusinessClassPrice;
+                    break;
+                case FlightClassType.First:
+                    price = flight.FirstClassPrice;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid flight class type.", nameof(classType));
+            }//con
+
+        }
     }
 }

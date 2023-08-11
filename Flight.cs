@@ -42,7 +42,7 @@ namespace AirportTicketBooking
               decimal economyClassPrice, decimal businessClassPrice, decimal firstClassPrice)
         {
             if (flightNumber != default) FlightNumber = flightNumber;// when read from file
-            else FlightNumber = ++Program.numOfFlights;//when make from the program
+            else FlightNumber = ++Program.NumberOfFlights;//when make from the program
             DepartureCountry = departureCountry;
             DestinationCountry = destinationCountry;
             DepartureAirport = departureAirport;
@@ -68,10 +68,5 @@ namespace AirportTicketBooking
 
             return validationErrors;
         }// to check if flight is valid and return a list of errors 
-        public void SaveToCsv(string csvFilePath)
-        {
-            string csvLine = $"{FlightNumber},{DepartureCountry},{DestinationCountry},{DepartureAirport},{ArrivalAirport},{DepartureDate},{EconomyClassPrice},{BusinessClassPrice},{FirstClassPrice}";
-            File.AppendAllText(csvFilePath, csvLine + Environment.NewLine);
-        }// save new flight to the file
     }
 }

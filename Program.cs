@@ -4,18 +4,17 @@ using System.Reflection.Metadata;
 using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics.Metrics;
-
 namespace AirportTicketBooking
 {
     internal static class Program
     {
-             public static int numOfFlights;
-             public static int numOfBookings;
+            public static int NumberOfFlights;
+            public static int NumberOfBookings;
             static async Task Main(string[] args)
             {
             await LoadCsvFilesData();
-            numOfFlights = StaticMembers.Flights.Count;
-            numOfBookings = StaticMembers.Bookings.Count + 1;
+            NumberOfFlights = FlightsManager.Flights.Count;
+            NumberOfBookings = BookingsManager.Bookings.Count;
             int choise;
             while (true)
             {
@@ -35,11 +34,10 @@ namespace AirportTicketBooking
                         string userName = Console.ReadLine();
                         Console.WriteLine("Enter your Password :  ");
                         string userPassword = Console.ReadLine();
-                        Passenger passenger = StaticMembers.Passengers.FirstOrDefault(p => p.Name == userName && p.Password == userPassword);
+                        Passenger passenger = PassengersManager.Passengers.FirstOrDefault(p => p.Name == userName && p.Password == userPassword);
                         if (passenger != null)
                         {
                             Console.WriteLine("Welcome, " + passenger.Name + "!");
-                            Console.WriteLine("- - - - - - - - - - - - - ");
 
                             while (true)
                             {
@@ -63,7 +61,7 @@ namespace AirportTicketBooking
                                 switch (option)
                                 {
                                     case 1:
-                                        passenger.ViewAllFlights();
+                                        FlightsManager.PrintFlights(FlightsManager.Flights);
                                         Console.WriteLine("Enter the number of the flight : ");
                                         int numberOfFlight;
                                         if (!int.TryParse(Console.ReadLine(), out numberOfFlight))
@@ -71,13 +69,12 @@ namespace AirportTicketBooking
                                             Console.WriteLine("Invalid input.");
                                             continue;
                                         }
-                                        Flight flight = StaticMembers.Flights[numberOfFlight - 1];
-                                        Console.WriteLine("What the class you need : ");
-                                        Console.WriteLine("1 - Economy class : ");
-                                        Console.WriteLine("2 - Business class : ");
-                                        Console.WriteLine("3 - First class : ");
-                                        int flightClass;
-                                        if (!int.TryParse(Console.ReadLine(), out flightClass))
+                                        Flight flight = FlightsManager.Flights[numberOfFlight - 1];
+                                        Console.WriteLine("What class do you need?");
+                                        Console.WriteLine("1 - Economy class");
+                                        Console.WriteLine("2 - Business class");
+                                        Console.WriteLine("3 - First class");
+                                        if (!Enum.TryParse(Console.ReadLine(), out FlightClassType flightClass))
                                         {
                                             Console.WriteLine("Invalid input.");
                                             continue;
@@ -88,17 +85,16 @@ namespace AirportTicketBooking
                                     case 2:
                                         Console.WriteLine("Inter the destination name :  ");
                                         string destinationName = Console.ReadLine();
-                                        if (StaticMembers.Flights.Any(f => f.DestinationCountry == destinationName))
+                                        if (FlightsManager.Flights.Any(f => f.DestinationCountry == destinationName))
                                         {
-                                            List<Flight> destinationFlights = StaticMembers.Flights.Where(f => f.DestinationCountry == destinationName).ToList();
-                                            StaticMembers.PrintFlights(destinationFlights);
+                                            List<Flight> destinationFlights = FlightsManager.Flights.Where(f => f.DestinationCountry == destinationName).ToList();
+                                            FlightsManager.PrintFlights(destinationFlights);
                                         }
                                         else Console.WriteLine("Theres no flights to this destination :( :  ");
                                         break;
 
-
                                     case 3:
-                                        passenger.PrintBookings();
+                                        BookingsManager.PrintBookingsList(passenger.PassengerBookings);
                                         Console.WriteLine("Select number of booking to cancel :  ");
                                         int cancelBooking;
                                         if (!int.TryParse(Console.ReadLine(), out cancelBooking))
@@ -111,7 +107,7 @@ namespace AirportTicketBooking
                                         else Console.WriteLine("Theres no booking with this number . ");
                                         break;
                                     case 4:
-                                        passenger.PrintBookings();
+                                        BookingsManager.PrintBookingsList(passenger.PassengerBookings);
                                         Console.WriteLine("Enter the number of booking to modify : ");
                                         int newClass;
                                         if (!int.TryParse(Console.ReadLine(), out newClass))
@@ -119,41 +115,37 @@ namespace AirportTicketBooking
                                             Console.WriteLine("Invalid input.");
                                             continue;
                                         }
-                                        Console.WriteLine("What the new class you need : ");
-                                        Console.WriteLine("1 - Economy class : ");
-                                        Console.WriteLine("2 - Business class : ");
-                                        Console.WriteLine("3 - First class : ");
-                                        int newFlightClass;
-                                        if (!int.TryParse(Console.ReadLine(), out newFlightClass))
+                                        Console.WriteLine("What's the new class you need?");
+                                        Console.WriteLine("1 - Economy class");
+                                        Console.WriteLine("2 - Business class");
+                                        Console.WriteLine("3 - First class");
+                                        if (!Enum.TryParse(Console.ReadLine(), out FlightClassType newFlightClass))
                                         {
                                             Console.WriteLine("Invalid input.");
                                             continue;
                                         }
                                         ModifyBookingClass(passenger, newClass, newFlightClass);
-
                                         break;
                                     case 5:
-                                        passenger.PrintBookings();
+                                        BookingsManager.PrintBookingsList(passenger.PassengerBookings);
                                         break;
                                     default:
                                         Console.WriteLine("Invalid choice.");
                                         break;
                                 }//switch 2
                             }//while2
-
                         }
                         else
                         {
                             Console.WriteLine("Invalid credentials. Login failed.");
                         }
                         break;
-
                     case 2:
                         Console.WriteLine("Enter your name :  ");
                         string managerName = Console.ReadLine();
                         Console.WriteLine("Enter your Password :  ");
                         string managerPassword = Console.ReadLine();
-                        Manager manager = StaticMembers.Managers.FirstOrDefault(m => m.Name == managerName && m.Password == managerPassword);
+                        Manager manager = ManegersManager.Managers.FirstOrDefault(m => m.Name == managerName && m.Password == managerPassword);
                         if (manager != null)
                         {
                             Console.WriteLine("Welcome, " + manager.Name + "!");
@@ -178,10 +170,10 @@ namespace AirportTicketBooking
                                 switch (option)
                                 {
                                     case 1:
-                                        manager.ViewAllFlights();
+                                        FlightsManager.PrintFlights(FlightsManager.Flights);
                                         break;
                                     case 2:
-                                        await StaticMembers.PrintBookingsList(StaticMembers.Bookings);
+                                        await BookingsManager.PrintBookingsList(BookingsManager.Bookings);
                                         break;
                                     case 3:
                                         await SearchDestination();
@@ -197,25 +189,80 @@ namespace AirportTicketBooking
                             Console.WriteLine("Invalid credentials. Login failed.");
                         }
                         break;
-
                         break;
-
                     default:
                         Console.WriteLine("Invalid choice.");
                         break;
                 }//switch
             }//while
         }//main
+        private static async Task LoadCsvFilesData()
+        {
+            Task readFlightsTask = Task.Run(FlightsManager.ReadFlightsFromFile);
+            Task readPassengersTask = Task.Run(PassengersManager.ReadPassengersFromFile);
+            Task readManagersTask = Task.Run(ManegersManager.ReadManagersFromFile);
+            Task readBookingsTask = Task.Run(BookingsManager.ReadBookingsFromFile);
 
+            await Task.WhenAll(readFlightsTask, readPassengersTask, readManagersTask, readBookingsTask);
+
+            Task loadPassengersBookingsTask = Task.Run(PassengersManager.LoadPassengersBookings);
+        }
+        private static void AddNewBooking(Passenger passenger, Flight flight, FlightClassType flightClass)
+        {
+            switch (flightClass)
+            {
+                case FlightClassType.Economy:
+                    if (passenger.AddBooking(new Booking(0, passenger, flight, FlightClassType.Economy)))
+                        Console.WriteLine("Flight booked!");
+                    else Console.WriteLine("You've already booked this flight.");
+                    break;
+                case FlightClassType.Business:
+                    if (passenger.AddBooking(new Booking(0, passenger, flight, FlightClassType.Business)))
+                        Console.WriteLine("Flight booked!");
+                    else Console.WriteLine("You've already booked this flight.");
+                    break;
+                case FlightClassType.First:
+                    if (passenger.AddBooking(new Booking(0, passenger, flight, FlightClassType.First)))
+                        Console.WriteLine("Flight booked!");
+                    else Console.WriteLine("You've already booked this flight.");
+                    break;
+                default:
+                    Console.WriteLine("Invalid flight class.");
+                    break;
+            }
+        }
+        private static void ModifyBookingClass(Passenger passenger, int newClass, FlightClassType newFlightClass)
+        {
+            switch (newFlightClass)
+            {
+                case FlightClassType.Economy:
+                    if (passenger.ModifyBooking(newClass, FlightClassType.Economy))
+                        Console.WriteLine("Flight class modified!");
+                    else Console.WriteLine("Booking not found.");
+                    break;
+                case FlightClassType.Business:
+                    if (passenger.ModifyBooking(newClass, FlightClassType.Business))
+                        Console.WriteLine("Flight class modified!");
+                    else Console.WriteLine("Booking not found.");
+                    break;
+                case FlightClassType.First:
+                    if (passenger.ModifyBooking(newClass, FlightClassType.First))
+                        Console.WriteLine("Flight class modified!");
+                    else Console.WriteLine("Booking not found.");
+                    break;
+                default:
+                    Console.WriteLine("Invalid flight class.");
+                    break;
+            }
+        }
         private static async Task SearchDestination()
         {
             Console.WriteLine("Enter the name of destination country : ");
             string destinationName = Console.ReadLine();
             List<Booking> bookingsForDestination = new List<Booking>();
-            bookingsForDestination = StaticMembers.Bookings.Where(b => b.BookedFlight.DestinationCountry == destinationName).ToList();
-            await StaticMembers.PrintBookingsList(bookingsForDestination);
+            bookingsForDestination = BookingsManager.Bookings.Where(b => b.BookedFlight.DestinationCountry == destinationName).ToList();
+            await BookingsManager.PrintBookingsList(bookingsForDestination);
         }
-
         private static void AddNewFlightToCsvFile(Manager manager)
         {
             Console.WriteLine("Enter the information about the new flight :  : ");
@@ -250,65 +297,6 @@ namespace AirportTicketBooking
             {
                 Console.WriteLine("Flight is added :) ");
                 manager.AddNewFlight(newFlight);
-            }
-        }
-
-        private static async Task LoadCsvFilesData()
-        {
-            Task readFlightsTask = Task.Run(StaticMembers.ReadFlightsFromFile);
-            Task readPassengersTask = Task.Run(StaticMembers.ReadPassengersFromFile);
-            Task readManagersTask = Task.Run(StaticMembers.ReadManagersFromFile);
-            Task readBookingsTask = Task.Run(StaticMembers.ReadBookingsFromFile);
-
-            await Task.WhenAll(readFlightsTask, readPassengersTask, readManagersTask, readBookingsTask);
-
-            Task loadPassengersBookingsTask = Task.Run(StaticMembers.LoadPassengersBookings);
-        }
-
-        private static void AddNewBooking(Passenger passenger, Flight flight, int flightClass)
-        {
-            if (flightClass == 1)
-            {
-                if (passenger.AddBooking(new Booking(0, passenger, flight, "economy class")))
-                    Console.WriteLine("Flight booked ! ");
-                else Console.WriteLine("You booked it befor . ");
-
-            }
-            else if (flightClass == 2)
-            {
-                if (passenger.AddBooking(new Booking(0, passenger, flight, "business class")))
-                    Console.WriteLine("Flight booked ! ");
-                else Console.WriteLine("You booked it befor . ");
-
-            }
-            else if (flightClass == 3)
-            {
-                if (passenger.AddBooking(new Booking(0, passenger, flight, "first class")))
-                    Console.WriteLine("Flight booked ! ");
-                else Console.WriteLine("You booked it befor . ");
-            }
-        }
-        private static void ModifyBookingClass(Passenger passenger, int newClass, int newFlightClass)
-        {
-            if (newFlightClass == 1)
-            {
-                if (passenger.ModifyBooking(newClass, "economy class"))
-                    Console.WriteLine("Flight modified  ! ");
-                else Console.WriteLine("Not exists . . ");
-
-            }
-            else if (newFlightClass == 2)
-            {
-                if (passenger.ModifyBooking(newClass, "business class"))
-                    Console.WriteLine("Flight modified ! ");
-                else Console.WriteLine("Not exists . ");
-
-            }
-            else if (newFlightClass == 3)
-            {
-                if (passenger.ModifyBooking(newClass, "first class"))
-                    Console.WriteLine("Flight modified ! ");
-                else Console.WriteLine("Not exists . ");
             }
         }
     }//class

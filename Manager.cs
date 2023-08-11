@@ -1,11 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace AirportTicketBooking
 {
     internal class Manager : Person
@@ -15,15 +13,12 @@ namespace AirportTicketBooking
             Name = name;
             Password = password;
         }
-        public void ViewAllFlights()
-        {
-            StaticMembers.PrintFlights(StaticMembers.Flights);
-        }
         public void AddNewFlight(Flight newflight)
         {
-            StaticMembers.Flights.Add(newflight);
-            newflight.SaveToCsv("flights.csv");
+            FlightsManager.Flights.Add(newflight);
+            FlightsManager.AddFlightToCsvFile("flights.csv", newflight);
         }// to add to the list and to the file
+
     }
 }
 

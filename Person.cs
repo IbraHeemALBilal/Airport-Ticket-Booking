@@ -15,6 +15,5 @@ namespace AirportTicketBooking
             Name = name;
             Password = password;
         }
-
     }
 }

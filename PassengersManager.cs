@@ -9,7 +9,7 @@ namespace AirportTicketBooking
 {
     internal static class PassengersManager
     {
-        public static List<Passenger> Passengers = new List<Passenger>();
+        public static List<Person> AllPassengers = new List<Person>();
         public static async Task ReadPassengersFromFile()
         {
             string csvFilePath = "Passengers.csv";
@@ -25,15 +25,15 @@ namespace AirportTicketBooking
                         fields[0],
                         fields[1]
                     );
-                    Passengers.Add(passenger);
+                    AllPassengers.Add(passenger);
                 }
             }
         }// to read passengers data from file
         public static async Task LoadPassengersBookings()
         {
-            foreach (var p in Passengers)
+            foreach (var p in AllPassengers)
             {
-                p.PassengerBookings = BookingsManager.Bookings.Where(b => b.Passenger.Name == p.Name).ToList();
+                ((Passenger)p).PassengerBookings = BookingsManager.AllBookings.Where(b => b.Passenger.Name == p.Name).ToList();
             }
         }
     }

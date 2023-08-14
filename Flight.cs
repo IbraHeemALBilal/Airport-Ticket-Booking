@@ -36,7 +36,6 @@ namespace AirportTicketBooking
 
         [Range(0, double.MaxValue, ErrorMessage = "FirstClassPrice should be greater than or equal to 0.")]
         public decimal FirstClassPrice { get; set; }
-
         public Flight(int flightNumber, string departureCountry, string destinationCountry,
               string departureAirport, string arrivalAirport, string departureDate,
               decimal economyClassPrice, decimal businessClassPrice, decimal firstClassPrice)

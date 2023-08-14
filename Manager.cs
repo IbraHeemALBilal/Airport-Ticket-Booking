@@ -15,8 +15,8 @@ namespace AirportTicketBooking
         }
         public void AddNewFlight(Flight newflight)
         {
-            FlightsManager.Flights.Add(newflight);
-            FlightsManager.AddFlightToCsvFile("flights.csv", newflight);
+            FlightsManager.AllFlights.Add(newflight);
+            FlightsFileOperations.AddFlightToCsvFile("flights.csv", newflight);
         }// to add to the list and to the file
 
     }

@@ -1,16 +1,30 @@
-﻿using AirportTicketBooking;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AirportTicketBooking
 {
-    internal static class ManegersManager
+    internal class ManagersManager
     {
-        public static List<Manager> Managers = new List<Manager>();
-        public static async Task ReadManagersFromFile()
+        private static ManagersManager _instance;//Singleton 
+        public List<Person> AllManagers { get; private set; }
+        private ManagersManager()
+        {
+            AllManagers = new List<Person>();
+        }
+        public static ManagersManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new ManagersManager();
+                }
+                return _instance;
+            }
+        }
+        public async Task ReadManagersFromFile()
         {
             string csvFilePath = "Managers.csv";
             using (StreamReader reader = new StreamReader(csvFilePath))
@@ -20,14 +34,11 @@ namespace AirportTicketBooking
                 {
                     string dataLine = await reader.ReadLineAsync();
                     string[] fields = dataLine.Split(',');
-                    var Manager = new Manager
-                    (
-                        fields[0],
-                        fields[1]
-                    );
-                    Managers.Add(Manager);
+                    var manager = new Manager(fields[0], fields[1]);
+                    AllManagers.Add(manager);
                 }
             }
         }// to read Managers data from file
+        
     }
 }

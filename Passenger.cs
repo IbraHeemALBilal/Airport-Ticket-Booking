@@ -22,7 +22,7 @@ namespace AirportTicketBooking
                 return false;
             }
             PassengerBookings.Add(booking);
-            BookingsManager.AddBookingToCsvFile("bookings.csv",booking);
+            BookingsFileOperations.AddBookingToCsvFile("bookings.csv",booking);
             return true;
         }// add
         public bool CancelBooking(int bookingId)
@@ -31,7 +31,7 @@ namespace AirportTicketBooking
             if (bookingToRemove != null)
             {
                 PassengerBookings.RemoveAll(b => b.Id == bookingId);
-                BookingsManager.DeleteBookingFromCsv("bookings.csv" , bookingId);
+                BookingsFileOperations.DeleteBookingFromCsv("bookings.csv" , bookingId);
                 return true;
             }
             return false;
@@ -43,10 +43,10 @@ namespace AirportTicketBooking
             {
                 bookingToModify.Class = newClass;
                 PassengerBookings.RemoveAll(b => b.Id == bookingId);
-                BookingsManager.Bookings.RemoveAll(b => b.Id == bookingId);
+                BookingsManager.AllBookings.RemoveAll(b => b.Id == bookingId);
                 PassengerBookings.Add(bookingToModify);
-                BookingsManager.Bookings.Add(bookingToModify);
-                BookingsManager.SaveBookingsToCsv("bookings.csv");
+                BookingsManager.AllBookings.Add(bookingToModify);
+                BookingsFileOperations.SaveBookingsToCsv("bookings.csv");
                 return true;
             }
             return false ;

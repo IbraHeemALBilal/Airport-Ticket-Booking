@@ -10,10 +10,10 @@ namespace AirportTicketBooking
     {
         public string Name { get; init; }
         public string Password { get; init; }
-        public Person(string name, string password)
+        public Person(string Name, string Password)
         {
-            Name = name;
-            Password = password;
+            this.Name = Name;
+            this.Password = Password;
         }
     }
 }

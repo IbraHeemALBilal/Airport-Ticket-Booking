@@ -9,10 +9,10 @@ namespace AirportTicketBooking
     internal class Passenger : Person
     {
         public List<Booking> PassengerBookings { get; set; }
-        public Passenger(string name, string password) : base(name, password)
+        public Passenger(string Name, string Password) : base(Name, Password)
         {
-            Name = name;
-            Password = password;
+            this.Name = Name;
+            this.Password = Password;
             PassengerBookings = new List<Booking>();
         }// con
         public bool AddBooking(Booking booking)

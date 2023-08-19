@@ -11,7 +11,7 @@ namespace AirportTicketBooking
 {
     internal class Booking
     {
-        private static int lastAssignedId = Program.NumberOfBookings;
+        private static int _lastAssignedId = Program.NumberOfBookings;
         public int Id { get; init; }
         public Passenger Passenger { get; init; }
         public Flight BookedFlight { get; init; }

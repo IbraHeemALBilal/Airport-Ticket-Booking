@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace AirportTicketBooking
 {
-    internal static class FlightsManager
+    internal class FlightsManager
     {
         public static List<Flight> AllFlights = new List<Flight>();
         public static List<Flight> SearchFlights(string? departureCountry, string? destinationCountry, string? departureDate, string? departureAirport, string? arrivalAirport)
@@ -20,5 +20,11 @@ namespace AirportTicketBooking
 
             return searchedFlights;
         }
+        public static void AddNewFlight(Flight newflight)
+        {
+            AllFlights.Add(newflight);
+            FlightsFileOperations.AddFlightToCsvFile(newflight);
+        }// to add to the list and to the file
+
     }
 }

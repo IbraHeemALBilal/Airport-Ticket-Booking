@@ -4,4 +4,6 @@ booking_id,passenger_name,F_num,Class
 3,Ahmad,3,First
 4,Ahmad,1,Economy
 5,Ahmad,6,Economy
-6,Ahmad,4,Business
+7,Rami,6,Business
+8,Rami,5,Economy
+6,Ahmad,4,Economy

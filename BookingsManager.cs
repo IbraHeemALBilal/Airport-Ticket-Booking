@@ -7,9 +7,14 @@ using System.Text;
 
 namespace AirportTicketBooking
 {
-    internal static class BookingsManager
+    internal class BookingsManager
     {
-        public static List<Booking> AllBookings = new List<Booking>();
+        public static List<Booking> AllBookings = new List <Booking> ();
+        public static async Task UpdateBookingsListAsync()
+        {
+                AllBookings.Clear();
+                await BookingsFileOperations.ReadBookingsFromFileAsync();
+        }// to update the bookings
         public static List<Booking> FilterBookings(string? departureCountry, string? destinationCountry, string? departureDate, string? departureAirport, string? arrivalAirport, FlightClassType? classType)
         {
             var filteredBookings = AllBookings.Where(booking =>

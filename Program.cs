@@ -4,6 +4,7 @@ using System.Reflection.Metadata;
 using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics.Metrics;
+
 namespace AirportTicketBooking
 {
     internal static class Program
@@ -15,6 +16,7 @@ namespace AirportTicketBooking
             await LoadCsvFilesData();
             NumberOfFlights = FlightsManager.AllFlights.Count;
             NumberOfBookings = BookingsManager.AllBookings.Count;
+            IFlightsPrinterFactory printerFactory = new FlightsPrinterFactory();
             int choise;
             while (true)
             {
@@ -62,7 +64,8 @@ namespace AirportTicketBooking
                                 switch (option)
                                 {
                                     case 1:
-                                        FlightsPrinter.PrintFlights(FlightsManager.AllFlights);
+                                        IFlightsPrinter consolePrinter = printerFactory.CreateFlightsPrinter(PrinterType.ConsolePrinter);
+                                        consolePrinter.PrintFlights(FlightsManager.AllFlights);
                                         Console.WriteLine("Enter the number of the flight : ");
                                         int numberOfFlight;
                                         if (!int.TryParse(Console.ReadLine(), out numberOfFlight))
@@ -86,7 +89,7 @@ namespace AirportTicketBooking
                                         SearchForFlights();
                                         break;
                                     case 3:
-                                        BookingsPrinter.PrintBookingsList(passenger.PassengerBookings);
+                                        BookingsPrinter.PrintBookingsListAsync(passenger.PassengerBookings);
                                         Console.WriteLine("Select number of booking to cancel :  ");
                                         int cancelBooking;
                                         if (!int.TryParse(Console.ReadLine(), out cancelBooking))
@@ -99,7 +102,7 @@ namespace AirportTicketBooking
                                         else Console.WriteLine("Theres no booking with this number . ");
                                         break;
                                     case 4:
-                                        BookingsPrinter.PrintBookingsList(passenger.PassengerBookings);
+                                        BookingsPrinter.PrintBookingsListAsync(passenger.PassengerBookings);
                                         Console.WriteLine("Enter the number of booking to modify : ");
                                         int newClass;
                                         if (!int.TryParse(Console.ReadLine(), out newClass))
@@ -119,7 +122,7 @@ namespace AirportTicketBooking
                                         ModifyBookingClass(passenger, newClass, newFlightClass);
                                         break;
                                     case 5:
-                                        BookingsPrinter.PrintBookingsList(passenger.PassengerBookings);
+                                        BookingsPrinter.PrintBookingsListAsync(passenger.PassengerBookings);
                                         break;
                                     default:
                                         Console.WriteLine("Invalid choice.");
@@ -133,12 +136,11 @@ namespace AirportTicketBooking
                         }
                         break;
                     case 2:
-                        ManagersManager ManagersManagerInstance = ManagersManager.Instance;//Singleton 
                         Console.WriteLine("Enter your name :  ");
                         string managerName = Console.ReadLine();
                         Console.WriteLine("Enter your Password :  ");
                         string managerPassword = Console.ReadLine();
-                        Manager manager = (Manager)ManagersManagerInstance.AllManagers.FirstOrDefault(m => m.Name == managerName && m.Password == managerPassword);
+                        Manager manager = (Manager)ManagersManager.AllManagers.FirstOrDefault(m => m.Name == managerName && m.Password == managerPassword);
                         if (manager != null)
                         {
                             Console.WriteLine("Welcome, " + manager.Name + "!");
@@ -146,10 +148,11 @@ namespace AirportTicketBooking
                             while (true)
                             {
                                 Console.WriteLine("Choose what you want to do :  ");
-                                Console.WriteLine("1 - Show all flights :  ");
-                                Console.WriteLine("2 - Show all bookings :  ");
-                                Console.WriteLine("3 - Filter the Bookings :  ");
-                                Console.WriteLine("4 - Add new flight :  ");
+                                Console.WriteLine("1 - Show all flights on console :  ");
+                                Console.WriteLine("2 - Show all flights on file  :  ");
+                                Console.WriteLine("3 - Show all bookings :  ");
+                                Console.WriteLine("4 - Filter the Bookings :  ");
+                                Console.WriteLine("5 - Add new flight :  ");
                                 Console.WriteLine("0 - back :   ");
                                 Console.WriteLine("- - - - - - - - - - - - - ");
 
@@ -163,16 +166,22 @@ namespace AirportTicketBooking
                                 switch (option)
                                 {
                                     case 1:
-                                        FlightsPrinter.PrintFlights(FlightsManager.AllFlights);
+                                        IFlightsPrinter consolePrinter = printerFactory.CreateFlightsPrinter(PrinterType.ConsolePrinter);
+                                        consolePrinter.PrintFlights(FlightsManager.AllFlights);
                                         break;
                                     case 2:
-                                        await BookingsPrinter.PrintBookingsList(BookingsManager.AllBookings);
+                                        IFlightsPrinter csvFilePrinter = printerFactory.CreateFlightsPrinter(PrinterType.CsvFilePrinter);
+                                        csvFilePrinter.PrintFlights(FlightsManager.AllFlights);
                                         break;
                                     case 3:
+                                        await BookingsManager.UpdateBookingsListAsync();
+                                        await BookingsPrinter.PrintBookingsListAsync(BookingsManager.AllBookings);
+                                        break;
+                                    case 4:
                                         await FilterBookings();
                                         break;
                                         break;
-                                    case 4:
+                                    case 5:
                                         AddNewFlightToCsvFile(manager);
                                         break;
                                 }
@@ -184,12 +193,13 @@ namespace AirportTicketBooking
                         }
                         break;
                         break;
-                    default:
-                        Console.WriteLine("Invalid choice.");
-                        break;
                     case 3:
                         SignUpOption();
                         break;
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
+
                 }//switch
             }//while
         }//main
@@ -214,19 +224,19 @@ namespace AirportTicketBooking
                 departureAirportFilter,
                 arrivalAirportFilter
             );
-            FlightsPrinter.PrintFlights(searchedFlights);
+            IFlightsPrinter consoleFlightsPrinter = new ConsoleFlightsPrinter();
+            consoleFlightsPrinter.PrintFlights(searchedFlights);
         }
         private static async Task LoadCsvFilesData()
         {
-            ManagersManager ManagersManagerInstance = ManagersManager.Instance;//Singleton 
-            Task readFlightsTask = Task.Run(FlightsFileOperations.ReadFlightsFromFile);
-            Task readPassengersTask = Task.Run(PassengersManager.ReadPassengersFromFile);
-            Task readManagersTask = Task.Run(ManagersManagerInstance.ReadManagersFromFile);//Singleton 
-            Task readBookingsTask = Task.Run(BookingsFileOperations.ReadBookingsFromFile);
+            Task readFlightsTask = Task.Run(FlightsFileOperations.ReadFlightsFromFileAsync);
+            Task readPassengersTask = Task.Run(PassengersFileOperations.ReadPassengersFromFileAsync);
+            Task readManagersTask = Task.Run(ManagersFileOperations.ReadManagersFromFileAsync);//Singleton 
+            Task readBookingsTask = Task.Run(BookingsFileOperations.ReadBookingsFromFileAsync);
 
             await Task.WhenAll(readFlightsTask, readPassengersTask, readManagersTask, readBookingsTask);
 
-            Task loadPassengersBookingsTask = Task.Run(PassengersManager.LoadPassengersBookings);
+            Task loadPassengersBookingsTask = Task.Run(PassengersManager.LoadPassengersBookingsAsync);
         }
         private static void AddNewBooking(Passenger passenger, Flight flight, FlightClassType flightClass)
         {
@@ -303,7 +313,7 @@ namespace AirportTicketBooking
                 arrivalAirportFilter,
                 classTypeFilter
             );
-            await BookingsPrinter.PrintBookingsList(filteredBookings);
+            await BookingsPrinter.PrintBookingsListAsync(filteredBookings);
         }
         private static void AddNewFlightToCsvFile(Manager manager)
         {
@@ -338,7 +348,7 @@ namespace AirportTicketBooking
             else
             {
                 Console.WriteLine("Flight is added :) ");
-                manager.AddNewFlight(newFlight);
+                FlightsManager.AddNewFlight(newFlight);
             }
         }
         private static void SignUpOption()
@@ -359,14 +369,15 @@ namespace AirportTicketBooking
                 string newUserPassword = Console.ReadLine();
                 if (signUpOption == 1)
                 {
-                    if (SignUp.AddNewUser(new Passenger(NewUserName, newUserPassword), "Passengers.csv", PassengersManager.AllPassengers))
+                    ISignUpSurvice PassengersFileOperationsInstanse = PassengersFileOperations.Instance;
+                    if (PassengersFileOperationsInstanse.AddNewUser(new Passenger(NewUserName, newUserPassword)))
                         Console.WriteLine("Success :) ");
                     else Console.WriteLine("Theres another account with the same name . ");
                 }
                 if (signUpOption == 2)
                 {
-                    ManagersManager ManagersManagerInstance2 = ManagersManager.Instance;
-                    if (SignUp.AddNewUser(new Manager(NewUserName, newUserPassword), "Managers.csv", ManagersManagerInstance2.AllManagers))
+                    ISignUpSurvice ManagersFileOperationsInstance = ManagersFileOperations.Instance;//Singleton 
+                    if (ManagersFileOperationsInstance.AddNewUser(new Manager(NewUserName, newUserPassword)))
                         Console.WriteLine("Success :) ");
                     else Console.WriteLine("Theres another account with the same name . ");
                 }

@@ -8,17 +8,11 @@ namespace AirportTicketBooking
 {
     internal class Manager : Person
     {
-        public Manager(string name, string password) : base(name, password)
+        public Manager(string Name, string Password) : base(Name, Password)
         {
-            Name = name;
-            Password = password;
+            this.Name = Name;
+            this.Password = Password;
         }
-        public void AddNewFlight(Flight newflight)
-        {
-            FlightsManager.AllFlights.Add(newflight);
-            FlightsFileOperations.AddFlightToCsvFile("flights.csv", newflight);
-        }// to add to the list and to the file
-
     }
 }
 

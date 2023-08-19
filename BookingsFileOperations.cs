@@ -4,7 +4,7 @@ namespace AirportTicketBooking
 {
     internal class BookingsFileOperations
     {
-        public static async Task ReadBookingsFromFile()
+        public static async Task ReadBookingsFromFileAsync()
         {
             string csvFilePath = "bookings.csv";
             using (StreamReader reader = new StreamReader(csvFilePath))

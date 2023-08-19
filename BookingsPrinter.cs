@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace AirportTicketBooking
 {
     internal class BookingsPrinter
     {
-        public static async Task PrintBookingsList(List<Booking> bookings)
+        public static async Task PrintBookingsListAsync(List<Booking> bookings)
         {
-            if (bookings == BookingsManager.AllBookings)
-            {
-                bookings.Clear();
-                await BookingsFileOperations.ReadBookingsFromFile();
-            }// to update the bookings
             const int bookingIdOfDeletedBookings = -1;
             Console.WriteLine("----------------------");
             foreach (var booking in bookings)

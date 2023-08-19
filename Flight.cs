@@ -36,20 +36,20 @@ namespace AirportTicketBooking
 
         [Range(0, double.MaxValue, ErrorMessage = "FirstClassPrice should be greater than or equal to 0.")]
         public decimal FirstClassPrice { get; set; }
-        public Flight(int flightNumber, string departureCountry, string destinationCountry,
-              string departureAirport, string arrivalAirport, string departureDate,
-              decimal economyClassPrice, decimal businessClassPrice, decimal firstClassPrice)
+        public Flight(int FlightNumber, string DepartureCountry, string DestinationCountry,
+              string DepartureAirport, string ArrivalAirport, string DepartureDate,
+              decimal EconomyClassPrice, decimal BusinessClassPrice, decimal FirstClassPrice)
         {
-            if (flightNumber != default) FlightNumber = flightNumber;// when read from file
-            else FlightNumber = ++Program.NumberOfFlights;//when make from the program
-            DepartureCountry = departureCountry;
-            DestinationCountry = destinationCountry;
-            DepartureAirport = departureAirport;
-            ArrivalAirport = arrivalAirport;
-            DepartureDate = departureDate;
-            EconomyClassPrice = economyClassPrice;
-            BusinessClassPrice = businessClassPrice;
-            FirstClassPrice = firstClassPrice;
+            if (FlightNumber != default) this.FlightNumber = FlightNumber;// when read from file
+            else this.FlightNumber = ++Program.NumberOfFlights;//when make from the program
+            this.DepartureCountry = DepartureCountry;
+            this.DestinationCountry = DestinationCountry;
+            this.DepartureAirport = DepartureAirport;
+            this.ArrivalAirport = ArrivalAirport;
+            this.DepartureDate = DepartureDate;
+            this.EconomyClassPrice = EconomyClassPrice;
+            this.BusinessClassPrice = BusinessClassPrice;
+            this.FirstClassPrice = FirstClassPrice;
         }//con
         public List<string> IsValid(Flight flight)
         {
